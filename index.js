@@ -1,7 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const app = express()
+const WebSocket = require('ws')
 
+const wss = new WebSocket.Server({ port: 7654 })
+
+const app = express()
 app.use(bodyParser.json())
 
 app.get('/', function (req, res) {
@@ -10,6 +13,7 @@ app.get('/', function (req, res) {
 
 app.post('/log', function (req, res) {
   console.info(req.body)
+  wss.clients.forEach((client) => client.send(JSON.stringify(req.body)))
   res.send();
 })
 
